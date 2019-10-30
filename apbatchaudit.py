@@ -15,11 +15,11 @@ def getbatchesfromdb():
 	   TRANSACTIONDATE
      
         FROM [MAS_GFC].[dbo].[AP_INVOICEHISTORYHEADER]
-        where convert(varchar(8),TRANSACTIONDATE,112) between '20190901' and '20190913'
+        where convert(varchar(8),TRANSACTIONDATE,112) between '20190926' and '20191028'
         order by TRANSACTIONDATE desc
     
     '''
-    rows=cx.execute(query)
+    
     cursor = cx.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -58,10 +58,11 @@ pofiles = [f for f in listdir('L:\\POBatches') if isfile(join('L:\\POBatches',f)
 filenames =[]
 pofilenames=[]
 for file in batchfiles:
-    filenames.append(os.path.splitext(file)[0])
+    filenames.append(splitext(file)[0])
 for file in pofiles:
-    pofilenames.append(os.path.splitext(file)[0])
+    pofilenames.append(splitext(file)[0])
 db=[]
+rows=getbatchesfromdb()
 for row in rows:
     db.append(str(row.UDF_BATCH_NO))
 missing=set(db)-set(filenames)
@@ -85,7 +86,7 @@ for rec in missing:
 #     print(data)
     extra.append(data.copy())
 # print(extra)
-df = pd.DataFrame(missing)
+df = pd.DataFrame(extra)
 wb= xw.Book()
 sheet= wb.sheets['Sheet1']
 sheet.range('A1').value=df
